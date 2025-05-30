@@ -5,7 +5,7 @@ import "time"
 
 type Usuario struct {
 	ID           uint      `gorm:"primaryKey;column:id;autoIncrement"`
-	Nombre       string    `gorm:"column:nombre;type:varchar(100);not null"`
+	Username     string    `gorm:"column:nombre;type:varchar(100);not null"`
 	Email        string    `gorm:"column:email;type:varchar(150);not null;unique"`
 	PasswordHash string    `gorm:"column:password_hash;type:varchar(256);not null"`
 	Rol          string    `gorm:"column:rol;type:enum('socio','administrador');not null"`
