@@ -1,16 +1,18 @@
-// Archivo: models/inscripcion.go
-package models
+// Archivo: dao/inscripcion.go
+package dao
 
 import "time"
 
+// Inscripcion representa la inscripción de un usuario a un horario específico.
 type Inscripcion struct {
 	ID               uint      `gorm:"primaryKey;column:id;autoIncrement"`
 	UsuarioID        uint      `gorm:"column:usuario_id;not null"`
-	ActividadID      uint      `gorm:"column:actividad_id;not null"`
+	HorarioID        uint      `gorm:"column:horario_id;not null"`
 	FechaInscripcion time.Time `gorm:"column:fecha_inscripcion;autoCreateTime"`
 
-	Usuario   Usuario   `gorm:"foreignKey:UsuarioID;references:ID"`
-	Actividad Actividad `gorm:"foreignKey:ActividadID;references:ID"`
+	// Relaciones
+	Usuario Usuario `gorm:"foreignKey:UsuarioID;references:ID"`
+	Horario Horario `gorm:"foreignKey:HorarioID;references:ID"`
 }
 
 func (Inscripcion) TableName() string {

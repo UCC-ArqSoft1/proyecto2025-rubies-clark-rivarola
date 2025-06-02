@@ -1,20 +1,27 @@
+// Archivo: domain/activity.go
 package domain
 
-import "time"
-
-// Activity representa una actividad periódica del gimnasio (por ejemplo Zumba).
-type Activity struct {
-	ID          int        `json:"id" gorm:"primary_key"`
-	Name        string     `json:"name"`                                                              // Ej: "Zumba", "Musculación"
-	Description string     `json:"description" gorm:"not_null"`                                       // Opcional
-	Schedule    []TimeSlot `json:"schedule" gorm:"foreignKey:ActivityID;constraint:OnDelete:CASCADE"` // Días y horarios en que se repite la actividad
+// Horario representa un turno específico de una actividad.
+type Horario struct {
+	ID          uint   `json:"id"`
+	ActividadID uint   `json:"actividad_id"`
+	Day         string `json:"day"`        // Ej: "Lun", "Mar", etc.
+	StartTime   string `json:"start_time"` // Ej: "18:00"
+	DurationMin uint16 `json:"duration"`   // Duración en minutos
 }
 
-// TimeSlot representa un horario recurrente en un día de la semana.
-type TimeSlot struct {
-	ID         int          `json:"id" gorm:"primaryKey"`
-	ActivityID int          `json:"activity_id" gorm:"not null;index"` // Foreign key
-	Weekday    time.Weekday `json:"weekday" gorm:"not null"`           // Ej: time.Monday
-	Start      string       `json:"start" gorm:"not null"`             // Ej: "18:00"
-	End        string       `json:"end" gorm:"not null"`               // Ej: "19:00"
+// Activity representa una actividad con todos sus horarios.
+type Activity struct {
+	ID                  uint    `json:"id"`
+	Name                string  `json:"name"`        // Ej: "Zumba", "Musculación"
+	Description         string  `json:"description"` // Detalle de la actividad
+	Capacity            uint16  `json:"capacity"`    // Cupo máximo
+	ImageURL            *string `json:"image_url,omitempty"`
+	CategoryName        string  `json:"category_name"`
+	InstructorName      string  `json:"instructor_name"`
+	InstructorEmail     *string `json:"instructor_email,omitempty"`
+	InstructorSpecialty *string `json:"instructor_specialty,omitempty"`
+	Active              bool    `json:"active"` // Indica si la actividad está habilitada
+
+	Schedule []Horario `json:"schedule"` // Lista de turnos disponibles
 }

@@ -1,5 +1,5 @@
 // Archivo: models/usuario.go
-package models
+package dao
 
 import "time"
 

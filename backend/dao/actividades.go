@@ -1,27 +1,22 @@
-// Archivo: models/actividad.go
-package models
-
-import (
-	"time"
-)
+// Archivo: dao/actividad.go
+package dao
 
 type Actividad struct {
-	ID          uint      `gorm:"primaryKey;column:id;autoIncrement"`
-	Titulo      string    `gorm:"column:titulo;not null"`
-	Descripcion string    `gorm:"column:descripcion;type:text;not null"`
-	DiaSemana   string    `gorm:"column:dia_semana;type:enum('Lun','Mar','Mie','Jue','Vie','Sab','Dom');not null"`
-	HoraInicio  time.Time `gorm:"column:hora_inicio;type:time;not null"`
-	DuracionMin uint16    `gorm:"column:duracion_min;not null"`
-	CupoMax     uint16    `gorm:"column:cupo_max;not null"`
-	ImagenURL   *string   `gorm:"column:imagen_url;type:varchar(255)"`
+	ID          uint    `gorm:"primaryKey;column:id;autoIncrement"`
+	Titulo      string  `gorm:"column:titulo;not null"`
+	Descripcion string  `gorm:"column:descripcion;type:text;not null"`
+	CupoMax     uint16  `gorm:"column:cupo_max;not null"`
+	ImagenURL   *string `gorm:"column:imagen_url;type:varchar(255)"`
 
-	CategoriaID  uint16 `gorm:"column:categoria_id"`
-	InstructorID uint16 `gorm:"column:instructor_id"`
+	NombreCategoria        string  `gorm:"column:nombre_categoria;type:varchar(50);not null"`
+	NombreInstructor       string  `gorm:"column:nombre_instructor;type:varchar(100);not null"`
+	EmailInstructor        *string `gorm:"column:email_instructor;type:varchar(150)"`
+	EspecialidadInstructor *string `gorm:"column:especialidad_instructor;type:varchar(100)"`
 
-	Categoria  Categoria  `gorm:"foreignKey:CategoriaID;references:ID"`
-	Instructor Instructor `gorm:"foreignKey:InstructorID;references:ID"`
+	Activo bool `gorm:"column:activo;default:true"`
 
-	Inscripciones []Inscripcion `gorm:"foreignKey:ActividadID"`
+	// Una actividad puede tener múltiples horarios
+	Horarios []Horario `gorm:"foreignKey:ActividadID"`
 }
 
 func (Actividad) TableName() string {

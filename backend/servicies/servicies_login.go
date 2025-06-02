@@ -3,7 +3,7 @@ package services
 
 import (
 	"backend/clients"
-	"backend/models"
+	"backend/dao"
 	"errors"
 	"fmt"
 	"os"
@@ -13,19 +13,23 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Login valida credenciales y retorna el ID del usuario y un JWT si son correctas.
 func Login(username string, password string) (uint, string, error) {
-	var user models.Usuario
+	var user dao.Usuario
 
-	err := clients.DB.Where("username = ?", username).First(&user).Error
+	// Buscamos por el campo "nombre" en la tabla usuarios (que mapea a Username en DAO)
+	err := clients.DB.Where("nombre = ?", username).First(&user).Error
 	if err != nil {
-		return 0, "", fmt.Errorf("usuario no encontrado: %w", err)
+		return 0, "", fmt.Errorf("usuario no encontrado")
 	}
 
+	// Comparamos la contraseña hasheada almacenada con la ingresada
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		return 0, "", errors.New("contraseña incorrecta")
+		return 0, "", errors.New("credenciales inválidas")
 	}
 
+	// Generamos JWT
 	token, err := generateJWT(user)
 	if err != nil {
 		return 0, "", fmt.Errorf("error generando token: %w", err)
@@ -34,7 +38,8 @@ func Login(username string, password string) (uint, string, error) {
 	return user.ID, token, nil
 }
 
-func generateJWT(user models.Usuario) (string, error) {
+// generateJWT crea un token JWT con claims básicos (user_id, username, rol, exp)
+func generateJWT(user dao.Usuario) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
 		secret = "secreto123" // valor por defecto para pruebas

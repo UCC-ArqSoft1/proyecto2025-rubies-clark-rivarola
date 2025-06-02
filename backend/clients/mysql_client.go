@@ -23,12 +23,12 @@ func init() {
 		panic(fmt.Errorf("error connecting to database: %w", err))
 	}
 
+	// Migrar todas las tablas necesarias: Usuario, Actividad, Horario, Inscripcion
 	tables := []interface{}{
-		&models.Usuario{},
-		&models.Categoria{},
-		&models.Instructor{},
-		&models.Actividad{},
-		&models.Inscripcion{},
+		&dao.Usuario{},
+		&dao.Actividad{},
+		&dao.Horario{},
+		&dao.Inscripcion{},
 	}
 
 	for _, table := range tables {
@@ -39,11 +39,12 @@ func init() {
 
 }
 
-func GetUserByUsername(username string) (models.Usuario, error) {
-	var user models.Usuario
-	txn := DB.First(&user, "username = ?", username)
+// GetUserByUsername busca un usuario por su nombre (campo 'nombre').
+func GetUserByUsername(username string) (dao.Usuario, error) {
+	var userDAO dao.Usuario
+	txn := DB.First(&userDAO, "nombre = ?", username)
 	if txn.Error != nil {
-		return models.Usuario{}, fmt.Errorf("error getting user: %w", txn.Error)
+		return dao.Usuario{}, fmt.Errorf("error getting user: %w", txn.Error)
 	}
-	return user, nil
+	return userDAO, nil
 }
