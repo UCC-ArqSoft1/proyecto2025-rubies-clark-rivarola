@@ -3,12 +3,17 @@ package main
 
 import (
 	"backend/controllers"
+	database "backend/db"
 	"backend/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	// Inicializar la base de datos (migraciones + seed)
+	database.InitDB()
+
 	// Inicializamos el router de Gin
 	router := gin.New()
 
@@ -25,22 +30,11 @@ func main() {
 	// -------------------------
 	router.GET("/activities", controllers.GetAllActivities)
 	router.GET("/activities/:id", controllers.GetActividadByID)
-	router.GET("/activities/:id/horarios", controllers.GetHorariosPorActividad)
-
-	// -------------------------
-	// Rutas de horarios
-	// -------------------------
-	router.GET("/horarios/:id", controllers.GetHorarioByID)
 
 	// -------------------------
 	// Rutas de inscripciones
 	// -------------------------
 	router.POST("/inscripciones", controllers.CrearInscripcion)
-
-	// -------------------------
-	// Rutas de inscripciones por usuario
-	// -------------------------
-	router.GET("/usuarios/:id/inscripciones", controllers.GetInscripcionesPorUsuario)
 
 	// Inicia el servidor en el puerto por defecto (":8080")
 	router.Run()

@@ -9,7 +9,7 @@ import (
 )
 
 // GetActivityByID busca en la base de datos una actividad por su ID.
-// Devuelve domain.Activity con todos sus horarios, o error si no existe.
+// Devuelve domain.Activity con todos sus horarios ordenados, o error si no existe.
 func GetActivityByID(id int) (domain.Activity, error) {
 	// 1. Cargar el registro DAO de la actividad
 	var daoAct dao.Actividad
@@ -18,9 +18,13 @@ func GetActivityByID(id int) (domain.Activity, error) {
 		return domain.Activity{}, fmt.Errorf("actividad con ID %d no encontrada: %w", id, tx.Error)
 	}
 
-	// 2. Cargar todos los horarios asociados a esta actividad
+	// 2. Cargar todos los horarios asociados a esta actividad, ordenados correctamente
 	var daoHorarios []dao.Horario
-	tx = clients.DB.Where("actividad_id = ?", id).Find(&daoHorarios)
+	tx = clients.DB.
+		Where("actividad_id = ?", id).
+		// Ordenamos por día de la semana en el orden Lun→Dom, y luego por hora_inicio
+		Order("FIELD(dia_semana, 'Lun','Mar','Mie','Jue','Vie','Sab','Dom'), hora_inicio ASC").
+		Find(&daoHorarios)
 	if tx.Error != nil {
 		return domain.Activity{}, fmt.Errorf("error cargando horarios para actividad %d: %w", id, tx.Error)
 	}
@@ -37,7 +41,7 @@ func GetActivityByID(id int) (domain.Activity, error) {
 		})
 	}
 
-	// 4. Mapear dao.Actividad → domain.Activity
+	// 4. Mapear dao.Actividad → domain.Activity, incluyendo el arreglo de horarios ordenados
 	domainAct := domain.Activity{
 		ID:                  daoAct.ID,
 		Name:                daoAct.Titulo,

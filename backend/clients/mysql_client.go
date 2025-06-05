@@ -23,28 +23,24 @@ func init() {
 		panic(fmt.Errorf("error connecting to database: %w", err))
 	}
 
-	// Migrar todas las tablas necesarias: Usuario, Actividad, Horario, Inscripcion
-	tables := []interface{}{
+	// Ejecutar AutoMigrate para TODAS las entidades del proyecto
+	err = DB.AutoMigrate(
 		&dao.Usuario{},
 		&dao.Actividad{},
 		&dao.Horario{},
 		&dao.Inscripcion{},
+	)
+	if err != nil {
+		panic(fmt.Errorf("error en AutoMigrate: %w", err))
 	}
-
-	for _, table := range tables {
-		if err := DB.AutoMigrate(table); err != nil {
-			panic(fmt.Errorf("error migrating table: %w", err))
-		}
-	}
-
 }
 
-// GetUserByUsername busca un usuario por su nombre (campo 'nombre').
+// GetUserByUsername busca un usuario por su nombre de usuario (campo nombre)
 func GetUserByUsername(username string) (dao.Usuario, error) {
-	var userDAO dao.Usuario
-	txn := DB.First(&userDAO, "nombre = ?", username)
+	var user dao.Usuario
+	txn := DB.Where("nombre = ?", username).First(&user)
 	if txn.Error != nil {
-		return dao.Usuario{}, fmt.Errorf("error getting user: %w", txn.Error)
+		return dao.Usuario{}, fmt.Errorf("error al buscar usuario: %w", txn.Error)
 	}
-	return userDAO, nil
+	return user, nil
 }
