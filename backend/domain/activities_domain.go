@@ -2,7 +2,7 @@
 package domain
 
 // Horario representa un turno específico de una actividad.
-type Horario struct {
+type Horarios struct {
 	ID          uint   `json:"id"`
 	ActividadID uint   `json:"actividad_id"`
 	Day         string `json:"day"`        // Ej: "Lun", "Mar", etc.

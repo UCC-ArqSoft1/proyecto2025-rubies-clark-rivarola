@@ -1,34 +1,47 @@
+// Archivo: main.go
 package main
 
 import (
 	"backend/controllers"
-	"backend/services"
 	"backend/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	services.Login("emiliano", "1234")
-
+	// Inicializamos el router de Gin
 	router := gin.New()
 
-	// Middleware CORS para cada ruta
-	router.POST("/users/login", utils.CORS, controllers.Login)
+	// Middleware global: CORS y recuperación de pánico
+	router.Use(utils.CORS, gin.Recovery())
 
-	// Actividades
-	router.GET("/activities/:id", utils.CORS, controllers.GetActividadByID)
+	// -------------------------
+	// Rutas de autenticación
+	// -------------------------
+	router.POST("/users/login", controllers.Login)
 
-	// Categorías
-	router.GET("/categorias", utils.CORS, controllers.GetAllCategorias)
-	router.GET("/categorias/:id", utils.CORS, controllers.GetCategoriaByID)
+	// -------------------------
+	// Rutas de actividades
+	// -------------------------
+	router.GET("/activities", controllers.GetAllActivities)
+	router.GET("/activities/:id", controllers.GetActividadByID)
+	router.GET("/activities/:id/horarios", controllers.GetHorariosPorActividad)
 
-	// Instructores
-	router.GET("/instructores", utils.CORS, controllers.GetAllInstructores)
-	router.GET("/instructores/:id", utils.CORS, controllers.GetInstructorByID)
+	// -------------------------
+	// Rutas de horarios
+	// -------------------------
+	router.GET("/horarios/:id", controllers.GetHorarioByID)
 
-	// Inscripciones
-	router.POST("/activities/:id/inscripciones", utils.CORS, controllers.CrearInscripcion)
+	// -------------------------
+	// Rutas de inscripciones
+	// -------------------------
+	router.POST("/inscripciones", controllers.CrearInscripcion)
 
+	// -------------------------
+	// Rutas de inscripciones por usuario
+	// -------------------------
+	router.GET("/usuarios/:id/inscripciones", controllers.GetInscripcionesPorUsuario)
+
+	// Inicia el servidor en el puerto por defecto (":8080")
 	router.Run()
 }
