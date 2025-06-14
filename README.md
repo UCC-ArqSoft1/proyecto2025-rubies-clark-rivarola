@@ -44,9 +44,10 @@ RUTAS DISPONIBLES:
 ->POST /inscripciones
 
 ## 🌐 Configurar y levantar el frontend: 
+Desde la carpeta frontend/ en la terminal:
 
 npm install //muy importante para que se instale de node_modules en el frontend(nosotros lo hacemos desde la terminal de Node.js command prompt)
-Desde la carpeta frontend/ en la terminal: 
+ 
 npm run de node (tambien lo hacemos desde la terminal de Node.js command prompt)
 Abre tu navegador en http://localhost:5173 (o el puerto que indique Vite).
 
