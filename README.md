@@ -44,6 +44,7 @@ RUTAS DISPONIBLES:
 ->POST /inscripciones
 
 🌐 3. Configurar y levantar el frontend
+
 Desde la carpeta frontend/ en la terminal: 
 npm install //muy importante para que se instale de node_modules en el frontend(nosotros lo hacemos desde la terminal de Node.js command prompt)
 npm run de node (tambien lo hacemos desde terminal de Node.js command prompt)
